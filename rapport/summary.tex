@@ -1,0 +1,46 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+\geometry{
+    a4paper,
+    left=25mm,
+    right=25mm,
+    top=25mm,
+    bottom=25mm,
+    heightrounded,
+}
+\title{\textbf{Project Summary: The Causal Effect of Smoking Bans on Asthma Rates}}
+\author{Amadeus Linge \& Ulrik Haugland}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty} 
+
+\vspace{-1.5cm} 
+\section{Summary of the Research Question and Data}
+
+This project aims to estimate the causal effect of the smoking ban in public places introduced in Norway in 2004 on public health outcomes. Specifically, we will investigate the impact on asthma-related cases and hospitalizations.
+To isolate the policy's effect from other confounding factors, we will employ a Difference-in-Differences (DiD) research design. This method compares the change in asthma outcomes in Norway (the treatment group) before and after the ban to the corresponding change over the same period in a control country, such as Sweden or Denmark, which did not implement a similar ban at that time. 
+\\
+
+Sweden implemented a similar ban in 2005 while Denmark did so in 2007. The post period for comparison with Sweden is short, but Sweden is probably the most comparable country to Norway. On the other hand, Denmark is also pretty similar and also have a much longer post treatment period. We will investigate both options before deciding which one to use as our control country.
+\\
+
+The data for this analysis consists of:
+
+\begin{itemize}
+    \item Asthma-related hospital admissions and emergency room visits from ssb databases in Norway. Data contains age groups, gender, geography and dates from 1999 to 2009.
+    \item Similar health data from the control country (Sweden or Denmark) for the same period.
+    \item Data on air quality, specifically PM2.5 levels, NO2 levels and other relevant pollutants from both countries that could affect asthma rates, to use as control variables.
+    \item Data on pollen counts, as pollen can significantly impact asthma rates, also to use as a control variable.
+    \item Data on part of population that smokes, as smoking rates could influence asthma rates.
+\end{itemize}
+
+\end{document}
