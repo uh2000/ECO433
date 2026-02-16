@@ -1,0 +1,25 @@
+\begin{thebibliography}{}
+
+\bibitem[{Federal Reserve Bank of St. Louis (FRED)}, 2023]{fred_tobacco_price}
+{Federal Reserve Bank of St. Louis (FRED)} (2023).
+\newblock Consumer price index: Tobacco for european union (eu).
+
+\bibitem[{Finnish Institute for Health and Welfare (THL)}, 2022]{thl}
+{Finnish Institute for Health and Welfare (THL)} (2022).
+\newblock Tobacco statistics 2022.
+\newblock November 2, 2025.
+
+\bibitem[{Kræftens Bekæmpelse}, ]{cancer_dk}
+{Kræftens Bekæmpelse}.
+\newblock Hvor mange ryger?
+\newblock November 2, 2025.
+
+\bibitem[{Statistics Norway (SSB)}, 2023]{ssb}
+{Statistics Norway (SSB)} (2023).
+\newblock Dagligrøykere, etter kjønn og alder.
+
+\bibitem[{The Public Health Agency of Sweden}, 2023]{folkhalsomyndigheten}
+{The Public Health Agency of Sweden} (2023).
+\newblock Towards a smoke-free sweden.
+
+\end{thebibliography}
