@@ -1,0 +1,232 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{makecell} % For multi-line column header
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{url} % <-- ADDED: Necessary for formatting the 'url' field
+\usepackage{amsmath, amssymb, graphicx, booktabs, natbib, geometry, setspace}
+
+
+\geometry{margin=1in}
+\setstretch{1.2}
+\title{The Impact of Public Smoking Bans on Daily Smoking Rates in the Nordic Countries}
+\author{Amadeus Linge, Ulrik Haugland \\ University of Bergen}
+\date{\today}
+\begin{document}
+\maketitle
+\section{Introduction}
+In this project, we have chosen to investigate the causal effect of public smoking bans on smoking rates across the Nordic countries: Norway, Denmark, Sweden, and Finland. In the early 2000s, these countries all introduced a smoking ban, but they did so at different times. This variation in policy timing provides us with a quasi-experimental setting that we can use to investigate the effects of the bans. Our initial approach considered a simple Difference-in-Differences model comparing Norway to a single control country, namely Spain. However, preliminary analysis revealed that the parallel trends assumption, a critical requirement for a valid DiD, did not hold between Norway and Spain.\\
+
+\noindent Therefore, we adopted a more robust staggered Difference-in-Differences approach, using an event study design. This method uses the staggered adoption of smoking bans across Norway (2004), Sweden (2005), Denmark (2007), and Finland (2005) to estimate a more reliable average treatment effect, while controlling for both country-specific and time-specific unobserved factors.
+
+\section{Research Question}
+\begin{quote}
+\emph{Did the staggered implementation of public smoking bans in Norway, Sweden, Denmark, and Finland cause a reduction in smoking within these countries?}
+\end{quote}
+This question is more complex than a simple two-country comparison and allows us to estimate an average policy effect across a more homogenous group of countries, which improves the external validity of our findings.
+
+\section{Data Description}
+In the analysis, we use an annual panel dataset constructed for Norway, Sweden, Denmark, and Finland from the years 1997 to 2023.
+% --- START OF MODIFICATION 1: ADD IN-TEXT CITATIONS ---
+The sources for our data are as follows: Swedish data from Folkhälsomyndigheten \cite{folkhalsomyndigheten}, Norwegian data from Statistisk sentralbyrå \cite{ssb}, Danish data from Kræftens Bekæmpelse \cite{cancer_dk}, and Finnish data from Statistikcentralen \cite{thl}. The tobacco price index is sourced from the Federal Reserve Bank of St. Louis (FRED) \cite{fred_tobacco_price}.
+\begin{itemize}
+\item \textbf{Data Cleaning and Merging:} Raw data on smoking rates for all countries were loaded and cleaned. The data was read from Excel and columns were renamed and filtered.
+% ... (rest of list content)
+\end{itemize}
+\begin{table}[h!]
+\centering
+\caption{Sample of Interpolated Annual Smoking Prevalence (\%)}
+\label{tab:smoking_rates}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Year} & \textbf{Norway} & \textbf{Sweden} & \textbf{Denmark} & \textbf{Finland} \\
+\midrule
+1996 & 34.50 & 20.00 & 34.00 & 19.50 \\
+1997 & 34.00 & 19.00 & 33.00 & 19.00 \\
+1998 & 33.25 & 18.00 & 32.00 & 18.00 \\
+1999 & 32.50 & 17.75 & 31.00 & 18.00 \\
+2000 & 31.75 & 17.50 & 30.00 & 18.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{itemize}
+    \item \textbf{Smoking Rates} (Dependent variable, $Y_{it}$): This is the percentage of the population who are regular smokers in country $i$ at year $t$. Data for years without direct observation were linearly interpolated to create a complete and balanced panel. The data is collected from surveys where participants are asked if they are smoking on a regular basis. The percentage of participants that answers yes makes for the percentage of the total population that are considered smokers. The number of participants in each survey varies but is between 1000 and a few thousand. 
+    \item \textbf{Tobacco Price Index} (Control variable, $\text{TobaccoPrice}_{it}$): This data is collected from The Harmonised Index of Consumer Prices for Tobacco (HICP-T) for each country. This is included as a key time-varying control variable to separate the effect of the smoking ban from the effect of changing cigarette prices, which are often driven by separate tax policies.
+\end{itemize}
+\newpage
+\section{Model Specification}
+We employ a staggered Difference-in-Differences methodology, estimated via a two-way fixed effects model, commonly referred to as an event study. This design is superior to a simple DiD when treatment is rolled out at different times across multiple units. The model controls for unobserved time-invariant country characteristics (e.g., cultural attitudes towards smoking) through country fixed effects, and common shocks affecting all countries in a given year (e.g., global anti-smoking campaigns) through year fixed effects.
+
+The estimating equation is specified as:
+\begin{equation}
+\text{Y}_{it} = \alpha_i + \lambda_t + \sum_{k \neq -1} \delta_k D_{ik} + \gamma \text{TobaccoPrice}_{it} + \varepsilon_{it}
+\end{equation}
+where:
+\begin{itemize}
+    \item $\text{Y}_{it}$ is the smoking prevalence in country $i$ at time $t$.
+    \item $\alpha_i$ represents country fixed effects, absorbing all static country-specific characteristics.
+    \item $\lambda_t$ represents year fixed effects, absorbing all common time trends.
+    \item $D_{ik}$ are dummy variables for "event time," where $k$ is the number of years relative to the implementation of the ban in country $i$. For example, $k=-2$ for observations two years before the ban. The year before the ban ($k=-1$) is omitted as the reference period.
+    \item The coefficients $\delta_k$ are the core of our analysis. They measure the average change in smoking prevalence $k$ years relative to the ban, compared to the year just before the ban, after accounting for fixed effects and tobacco prices.
+    \item $\text{TobaccoPrice}_{it}$ is the control for the tobacco price index.
+    \item $\varepsilon_{it}$ is the error term. Standard errors are clustered at the country level to account for serial correlation within each country.
+\end{itemize}
+
+\noindent To interpret our results, we will be interested in the estimated $\delta_k$ coefficients. To confirm the validity of our model, we expect the coefficients for the pre-treatment periods ($k < 0$) to be statistically insignificant and close to zero. To conclude that the policy had an effect, we have to look for the post-treatment coefficients ($k \ge 0$) to be statistically significant and negative, indicating a reduction in smoking rates following the ban.
+\newpage
+\section{Results}
+\subsection{Parallel Trends Assumption}
+The validity of our event study design depends on the parallel trends assumption, which states that there are should be no differences in trends between early- and late-adopting countries before the treatment. We test this by looking at the coefficients on the pre-treatment event time dummies ($\delta_k$ for $k < -1$). If these coefficients are statistically indistinguishable from zero, the assumption holds. Our regression output confirms this: all pre-treatment coefficients have p-values well above 0.10, providing strong evidence that the parallel trends assumption is satisfied. This is an important finding that helps validating our research design.
+
+%MÅ LEGGE INN EN FIGUR HER FOR Å VISE AT PARALLELL TREND TESTEN ER GJORT OG REGRESJONSRESULTATENE
+% --- Suggested Figure Location 1 ---
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\linewidth]{parallell_trend_assumption.png}
+    \caption{Event Study: Effect of Smoking Bans on Smoking Rates}
+    \label{fig:event_study}
+    % Insert the event study plot generated by your notebook here.
+    % For example: \includegraphics[width=0.8\textwidth]{event_study_plot.png}
+    \flushleft
+    \footnotesize{\textit{Notes:} The plot shows the estimated coefficients ($\delta_k$) on event time dummies from Equation 1. The vertical axis represents the change in smoking prevalence in percentage points. The horizontal axis shows years relative to the ban implementation, with year -1 as the omitted reference category. The vertical dashed line indicates the year of the ban.}
+\end{figure}
+% ------------------------------------
+
+
+\newpage
+\subsection{Estimated Treatment Effects}
+The event study plot (Figure \ref{tab:event_study_condensed}) visualizes our main findings, which are based on the regression model that includes a control for tobacco prices. As confirmed by the regression output, the coefficients for the pre-treatment period (EventTime $<$ -1) are all statistically insignificant, with p-values well above 0.10. This provides strong evidence that the parallel trends assumption holds, validating our research design.
+
+\\\\
+\begin{table}[htbp]
+    \centering
+    \caption{Condensed Event Study Results (with Tobacco Price Control)}
+    \label{tab:event_study_condensed}
+    % \sisetup{...} % Keep the siunitx setup from before
+    \begin{tabularx}{\textwidth}{
+        >{\raggedright\arraybackslash}X S[table-format=-2.3] S[table-format=2.3] S[table-format=-1.3] S[table-format=1.3] S[table-format=-2.3] S[table-format=2.3]
+    }
+    \toprule
+    \multicolumn{7}{l}{\textbf{Estimation:} OLS \quad \textbf{Dep. var.:} Smokers \quad \textbf{Fixed effects:} Country + Year} \\
+    \midrule
+    \textbf{Coefficient} & {\textbf{Estimate}} & {\textbf{Std. Error}} & {\textbf{t value}} & {\textbf{Pr($>|t|$)}} & {\textbf{2.5\%}} & {\textbf{97.5\%}} \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Event Time Dummies (Baseline: T.-1)}} \\
+    \midrule
+    \textit{Pre-Treatment Period} & & & & & & \\
+    C(...)[T.-9] & -9.381 & 19.074 & -0.492 & 0.657 & -70.084 & 51.322 \\
+    C(...)[T.-4] & -4.379 & 6.841 & -0.640 & 0.568 & -26.150 & 17.393 \\
+    C(...)[T.-2] & -1.392 & 1.501 & -0.927 & 0.422 & -6.169 & 3.386 \\
+    \midrule
+    \textit{Post-Treatment Period} & & & & & & \\
+    C(...)[T.0]  & 1.438 & 2.219 & 0.648 & 0.563 & -5.623 & 8.500 \\
+    C(...)[T.1]  & 2.380 & 3.708 & 0.642 & 0.567 & -9.420 & 14.179 \\
+    C(...)[T.5]  & 4.944 & 7.445 & 0.664 & 0.554 & -18.749 & 28.638 \\
+    C(...)[T.19] & 3.605 & 3.347 & 1.077 & 0.360 & -7.047 & 14.256 \\
+    \midrule
+    \textit{Control Variable} & & & & & & \\
+    TobaccoPrice & 0.043 & 0.091 & 0.475 & 0.667 & -0.246 & 0.333 \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Summary of Unreported Coefficients:}} \\
+    \multicolumn{7}{l}{Pre-treatment (T.-10 to T.-3, excluding those above): All P-values $>$ 0.389.} \\
+    \multicolumn{7}{l}{Post-treatment (T.2 to T.18, excluding T.5): All P-values $>$ 0.324.} \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Goodness-of-Fit Statistics: RMSE: 2.054, R\textsuperscript{2}: 0.915, R\textsuperscript{2} Within: 0.217}} \\
+    \bottomrule
+    \end{tabularx}
+    \caption*{Note: Full regression results are provided in Appendix A. Inference is CRV1, clustered on Country.}
+\end{table}
+\newpage
+\noindent When looking at the post-treatment period (EventTime $\ge$ 0), we find no evidence that the smoking bans caused a reduction in smoking prevalence. The coefficient for the year of the ban's implementation (T.0) is a small, positive value (1.438) and is statistically insignificant (p=0.563). This indicates that there is no immediate behavioral change in the year the policy was implemented.
+\\\\
+Furthermore, all the post-treatment coefficients are also statistically insignificant. While the point estimates are surprisingly positive, suggesting a potential increase in smoking rates relative to the pre-ban trend, none of these estimates are statistically distinguishable from zero. For instance, the long run effect at 19 years post-ban (T.19) has a coefficient of 3.605 but a p-value of 0.360, indicating that there was no significant long-term effect. The control variable for tobacco price is also statistically insignificant.
+
+In summary, our analysis fails to find any statistically significant effect of the smoking bans on smoking rates in any post-treatment year. The results do not support the hypothesis that these policies led to a reduction in smoking.
+
+
+\section{Limitations}
+Even though the staggered DiD design is a strong design for a model, this analysis has some limitations. 
+First, the use and reliance on interpolated data for both smoking rates and tobacco prices may smooth over important year-to-year changes and could introduce some measurement error. 
+Second, the counterintuitive positive long-term effect needs further investigation. It could be an effect of our data collection and precessing, 
+or it could point to complex behavioral responses or other confounding policies not captured in our model. 
+Also, while we control for tobacco prices, other unobserved, time varying factors at country level may still confound our estimates.
+
+
+\section{Conclusion}
+This study uses a staggered Difference-in-Differences approach to estimate the causal impact of public smoking bans in four Nordic countries. Our design is validated by strong evidence of parallel pre-treatment trends. However, our findings do not support our hypothesis that these bans caused a reduction in smoking prevalence. We find no significant effect, and the long term point estimates are positive which we did not expect. This suggests that, in the Nordic countries which already had declining smoking rates, the incremental effect of these specific public smoking bans may have been negligible or overshadowed by other factors when looking at one of its probable effects, to reduce smoking. 
+
+\bibliographystyle{apalike} % <-- MODIFIED: Changed from 'plain' to 'apalike'
+\bibliography{references}
+
+
+% --- START OF APPENDIX (MAXIMUM COMPRESSION) ---
+\newpage
+\appendix
+\section{Full Regression Results}
+\label{app:full_regression_results}
+
+\begin{table}[h!]
+    \centering
+    \caption{Full Event Study Regression Output (with Tobacco Price Control)}
+    \label{tab:full_appendix_results}
+    \small % Reducing font size for the table
+    \begin{tabularx}{\textwidth}{
+        >{\raggedright\arraybackslash}X 
+        S[table-format=-2.3] 
+        S[table-format=2.3] 
+        S[table-format=-1.3] 
+        S[table-format=1.3] 
+        S[table-format=-2.3] 
+        S[table-format=2.3]
+    }
+    \toprule
+    \multicolumn{7}{l}{\textbf{Estimation:} OLS \quad \textbf{Dep. var.:} Smokers \quad \textbf{Fixed effects:} Country + Year} \\
+    \midrule
+    \textbf{Event Time Coeff.} & {\textbf{Estimate}} & {\textbf{Std. Error}} & {\textbf{t-value}} & {\textbf{Pr($>|t|$)}} & {\textbf{2.5\%}} & {\textbf{97.5\%}} \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Relative Years to Ban (Baseline: T.-1)}} \\
+    \cline{1-7}
+    T.-9 & -2.908 & 20.889 & -0.139 & 0.898 & -69.385 & 63.570 \\
+    T.-8 & -0.888 & 17.501 & -0.051 & 0.963 & -56.585 & 54.808 \\
+    T.-7 & -7.681 & 18.404 & -0.417 & 0.704 & -66.249 & 50.888 \\
+    T.-6 & -3.449 & 13.858 & -0.249 & 0.820 & -47.553 & 40.654 \\
+    T.-5 & -3.614 & 9.480 & -0.381 & 0.728 & -33.783 & 26.554 \\
+    T.-4 & -2.386 & 7.601 & -0.314 & 0.774 & -26.574 & 21.803 \\
+    T.-3 & -2.047 & 4.522 & -0.453 & 0.681 & -16.440 & 12.345 \\
+    T.-2 & -0.565 & 1.913 & -0.295 & 0.787 & -6.653 & 5.523 \\
+    T.0 & 0.690 & 2.142 & 0.322 & 0.769 & -6.128 & 7.508 \\
+    T.1 & 0.928 & 4.134 & 0.225 & 0.837 & -12.229 & 14.086 \\
+    T.2 & 0.805 & 5.464 & 0.147 & 0.892 & -16.582 & 18.193 \\
+    T.3 & 0.570 & 6.502 & 0.088 & 0.936 & -20.124 & 21.263 \\
+    T.4 & 0.807 & 7.289 & 0.111 & 0.919 & -22.388 & 24.003 \\
+    T.5 & 1.600 & 8.362 & 0.191 & 0.861 & -25.013 & 28.212 \\
+    T.6 & 2.843 & 8.832 & 0.322 & 0.769 & -25.266 & 30.951 \\
+    T.7 & 3.315 & 8.909 & 0.372 & 0.735 & -25.038 & 31.667 \\
+    T.8 & 3.724 & 9.135 & 0.408 & 0.711 & -25.346 & 32.795 \\
+    T.9 & 4.872 & 9.136 & 0.533 & 0.631 & -24.203 & 33.947 \\
+    T.10 & 4.616 & 8.028 & 0.575 & 0.606 & -20.934 & 30.166 \\
+    T.11 & 4.676 & 7.366 & 0.635 & 0.571 & -18.765 & 28.118 \\
+    T.12 & 3.713 & 7.157 & 0.519 & 0.640 & -19.063 & 26.489 \\
+    T.13 & 2.803 & 6.653 & 0.421 & 0.702 & -18.370 & 23.977 \\
+    T.14 & 2.542 & 6.635 & 0.383 & 0.727 & -18.575 & 23.658 \\
+    T.15 & 2.597 & 5.644 & 0.460 & 0.677 & -15.363 & 20.558 \\
+    T.16 & 2.938 & 5.002 & 0.587 & 0.598 & -12.982 & 18.857 \\
+    T.17 & 2.351 & 4.670 & 0.503 & 0.649 & -12.511 & 17.213 \\
+    T.18 & 4.374 & 4.402 & 0.994 & 0.394 & -9.634 & 18.382 \\
+    T.19 & 3.576 & 3.629 & 0.985 & 0.397 & -7.974 & 15.125 \\
+    \cline{1-7}
+    TobaccoPrice & 0.045 & 0.099 & 0.457 & 0.679 & -0.271 & 0.361 \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Summary Statistics: } RMSE: 2.22, R\textsuperscript{2}: 0.879, R\textsuperscript{2} Within: 0.144 \quad Observations: 108} \\
+    \bottomrule
+    \end{tabularx}
+    \caption*{\textit{Note:} Inference is CRV1, clustered on Country.}
+\end{table}
+% --- END OF APPENDIX (MAXIMUM COMPRESSION) ---
+\end{document}
